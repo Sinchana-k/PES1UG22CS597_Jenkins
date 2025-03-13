@@ -2,23 +2,19 @@ pipeline {
     agent any
 
     stages {
-        stage('Clone repository') {
-            steps {
-                checkout([$class: 'GitSCM',
-                    branches: [[name: '*/main']],
-                    userRemoteConfigs: [[url: 'https://github.com/Sinchana-k/PES1UG22CS597_Jenkins']]
-                ])
-            }
-        }
+        
 
         stage('Build') {
             steps {
+                build 'PES1UG22CS597'
                 sh 'g++ main.cpp -o output'
+                echo 'build is complete'
             }
         }
 
         stage('Test') {
             steps {
+                sh 'chmod +x output'
                 sh './output'
             }
         }
