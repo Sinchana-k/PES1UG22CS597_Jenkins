@@ -1,41 +1,39 @@
 pipeline {
     agent any
 
-    environment {
-        SRN = 'PES1UG22CS597' 
-        CPP_FILE = 'mains.cpp' 
-    }
-
     stages {
+        stage('Clone repository') {
+            steps {
+                checkout([$class: 'GitSCM',
+                    branches: [[name: '*/main']],
+                    userRemoteConfigs: [[url: 'https://github.com/Sinchana-k/PES1UG22CS597_Jenkins']]
+                ])
+            }
+        }
+
         stage('Build') {
             steps {
-                script {
-                    sh 'g++ ${CPP_FILE} -o ${SRN}_1'
-                }
+                sh 'g++ main.cpp -o output'
             }
         }
 
         stage('Test') {
             steps {
-                script {
-                    sh './${SRN}_1'
-                }
+                sh './output'
             }
         }
 
         stage('Deploy') {
             steps {
-                echo 'Deployment step'
+                echo 'deploy'
             }
         }
     }
 
     post {
         failure {
-            echo 'Pipeline failed. Please check the logs for details.'
-        }
-        success {
-            echo 'Pipeline completed successfully!'
+            error 'Pipeline failed'
         }
     }
 }
+
